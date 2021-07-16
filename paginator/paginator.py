@@ -84,6 +84,7 @@ class Paginator:
                     if str(reaction.emoji) == emojis[1]:
                         if current_page != len(pages) - 1:
                             current_page += 1
+                            embed = pages[current_page].embed
 
                             if embed is not None:
                                 try:
@@ -95,6 +96,7 @@ class Paginator:
                     else:
                         if current_page != 0:
                             current_page -= 1
+                            embed = pages[current_page].embed
 
                             if embed is not None:
                                 try:
