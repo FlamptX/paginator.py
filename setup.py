@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="paginator.py",
-    version="0.5.2",
+    version="0.6",
     author="Flampt",
     license="MIT",
     description="Simple to use discord paginator for messages and embeds with reactions and buttons.",
