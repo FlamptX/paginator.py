@@ -1,15 +1,15 @@
 from discord import Embed
 
-class PagesType:
+class NavigationType:
     """
-    For those who don't want to remember two numbers, use this in the MessagePages type
+    For those who don't want to remember two numbers, use this in the send method type argument
     """
     Reactions = 1  # Change page with reactions
     Buttons = 2  # Change page with buttons
 
 class Page:
     """
-    Used in MessagePages pages argument
+    Used in the pages list
     """
     def __init__(self, content: str = None, embed: Embed = None):
         self.content = content

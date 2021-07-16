@@ -7,7 +7,7 @@
   <p align='center'>
     <img src=https://img.shields.io/pypi/dm/paginator.py?color=success&label=PyPi%20Downloads&style=flat-square>
     <img src=https://shields.io/github/issues-raw/FlamptX/discord-paginator?color=success&label=Active%20Issues&style=flat-square>
-    <img src=https://img.shields.io/badge/Latest_Version-0.2-informational>
+    <img src=https://img.shields.io/badge/Latest_Version-0.5-informational>
   </p>
   <p align='center'>
     Simple to use discord paginator for messages and embeds with reactions and buttons.
@@ -21,7 +21,7 @@
 - Change pages with buttons or reactions
 - Actively maintained
 ## Links
-- **[Documentation](https://flampt.gitbook.com/paginator)**
+- **[Documentation](https://flampt.gitbook.io/paginator)**
 - **[PyPi](https://pypi.org/project/paginator.py)**
 ## Installation
 You can easily install it using the python package manager `pip`

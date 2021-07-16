@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="paginator.py",
-    version="0.4",
+    version="0.5",
     author="Flampt",
     license="MIT",
     description="Simple to use discord paginator for messages and embeds with reactions and buttons.",
@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/FlamptX/paginator.py",
     project_urls={
         "Source": "https://github.com/FlamptX/paginator.py",
-        "Documentation": "https://flampt.gitbook.com/paginator"
+        "Documentation": "https://flampt.gitbook.io/paginator"
     },
     classifiers=[
         "Programming Language :: Python :: 3",

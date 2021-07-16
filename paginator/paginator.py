@@ -41,18 +41,21 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int, timeout: int = 60, restricted_user: Union[discord.Member, discord.User] = None, disable_on_timeout: bool = True):
+    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: int = 60, restricted_user: Union[discord.Member, discord.User] = None, disable_on_timeout: bool = True):
         """
         Only put Page objects in the pages list or you an error will raise
-        type must be either 1 or 2, alternative you can use PagesType which returns one of those
+        type must be either 1 or 2, alternative you can use NavigationType which returns one of those
         """
 
         if type not in [1, 2]:
             raise InvalidTypeError(f"Type {type} is not valid. It should either be 1 or 2.")
 
+        if pages is []:
+            raise InvalidTypeError("pages list is empty")
+
         for page in pages:
             if not isinstance(page, Page):
-                raise InvalidTypeError(f"Found object {_type(page)} in the pages list. Only Page objects should be in it.")
+                raise InvalidTypeError(f"Found {_type(page)} in the pages list. Only Page objects should be in it.")
 
         embed = pages[0].embed
 
