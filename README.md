@@ -7,7 +7,7 @@
   <p align='center'>
     <img src=https://img.shields.io/pypi/dm/paginator.py?color=success&label=PyPi%20Downloads&style=flat-square>
     <img src=https://shields.io/github/issues-raw/FlamptX/discord-paginator?color=success&label=Active%20Issues&style=flat-square>
-    <img src=https://img.shields.io/badge/Latest_Version-0.5-informational>
+    <img src=https://img.shields.io/badge/Latest_Version-0.5.1-informational>
   </p>
   <p align='center'>
     Simple to use discord paginator for messages and embeds with reactions and buttons.
@@ -34,7 +34,7 @@ Here are some examples that might help.
 ### Sending a message with pages that uses reaction
 
 ```python
-from paginator import Paginator, Page, PagesType
+from paginator import Paginator, Page, NavigationType
 from discord import Embed
 
 ...
@@ -50,12 +50,12 @@ async def test(ctx):
         Page(embed=Embed(title="Page #3", description="Guess... testing"))
     ]
 
-    await paginator.send(ctx.channel, pages, type=PagesType.Reactions)
+    await paginator.send(ctx.channel, pages, type=NavigationType.Reactions)
 ```
 ### Sending a message with pages that uses buttons
 
 ```python
-from paginator import Paginator, Page, PagesType
+from paginator import Paginator, Page, NavigationType
 from discord import Embed
 
 ...
@@ -71,7 +71,7 @@ async def test(ctx):
         Page(embed=Embed(title="Page #3", description="Guess... testing"))
     ]
 
-    await paginator.send(ctx.channel, pages, type=PagesType.Buttons)
+    await paginator.send(ctx.channel, pages, type=NavigationType.Buttons)
 ```
 ## Changing the emojis
 
