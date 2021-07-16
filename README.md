@@ -21,7 +21,7 @@
 - Change pages with buttons or reactions
 - Actively maintained
 ## Links
-- **[Documentation](https://gitbook.com)**
+- **[Documentation](https://flampt.gitbook.com/paginator)**
 - **[PyPi](https://pypi.org/project/paginator.py)**
 ## Installation
 You can easily install it using the python package manager `pip`
@@ -34,7 +34,7 @@ Here are some examples that might help.
 ### Sending a message with pages that uses reaction
 
 ```python
-from paginator import Paginator, Page, PagesType, MessagePages
+from paginator import Paginator, Page, PagesType
 from discord import Embed
 
 ...
@@ -44,18 +44,18 @@ paginator = Paginator(bot)
 
 @bot.command()
 async def test(ctx):
-    pages = MessagePages([
+    pages = [
         Page(content="React!", embed=Embed(title="Page #1", description="Testing")),
         Page(embed=Embed(title="Page #2", description="Still testing")),
         Page(embed=Embed(title="Page #3", description="Guess... testing"))
-    ], type=PagesType.Reactions)
+    ]
 
-    await paginator.send(ctx.channel, pages)
+    await paginator.send(ctx.channel, pages, type=PagesType.Reactions)
 ```
 ### Sending a message with pages that uses buttons
 
 ```python
-from paginator import Paginator, Page, PagesType, MessagePages
+from paginator import Paginator, Page, PagesType
 from discord import Embed
 
 ...
@@ -65,24 +65,22 @@ paginator = Paginator(bot)
 
 @bot.command()
 async def test(ctx):
-    pages = MessagePages([
+    pages = [
         Page(content="Click!", embed=Embed(title="Page #1", description="Testing")),
         Page(embed=Embed(title="Page #2", description="Still testing")),
         Page(embed=Embed(title="Page #3", description="Guess... testing"))
-    ], type=PagesType.Buttons)
+    ]
 
-    await paginator.send(ctx.channel, pages)
+    await paginator.send(ctx.channel, pages, type=PagesType.Buttons)
 ```
 ## Changing the emojis
 
 ```python
 from paginator import Paginator, PageEmojis
-from discord import Embed
 
 ...
 
 paginator = Paginator(bot)
-
 
 class Emojis(PageEmojis):
     def __init__(self):
@@ -90,7 +88,6 @@ class Emojis(PageEmojis):
 
         self.back = "⏪"
         self.forward = "⏩"
-
 
 paginator.page_emojis = Emojis()
 ```

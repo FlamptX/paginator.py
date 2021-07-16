@@ -5,6 +5,10 @@ from discord import TextChannel, DMChannel, Client
 from discord.ext import commands
 from discord_components import DiscordComponents, InteractionType, Button
 from .objects import *
+from .errors import *
+from typing import Union
+
+_type = type
 
 class Paginator:
     """
@@ -20,7 +24,7 @@ class Paginator:
     send coroutine
         channel: Union[TextChannel, DMChannel]
             The channel to send the message to
-        pages_message: PagesMessage
+        pages: PagesMessage
             The object containing data to send the message
     """
     def __init__(self, bot: Union[Client, commands.Bot]):
@@ -37,20 +41,31 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages_message: MessagePages, timeout: int = 60, restricted_user: Union[discord.Member, discord.User] = None, disable_on_timeout: bool = True):
+    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int, timeout: int = 60, restricted_user: Union[discord.Member, discord.User] = None, disable_on_timeout: bool = True):
+        """
+        Only put Page objects in the pages list or you an error will raise
+        type must be either 1 or 2, alternative you can use PagesType which returns one of those
+        """
 
-        embed = pages_message.pages[0].embed
+        if type not in [1, 2]:
+            raise InvalidTypeError(f"Type {type} is not valid. It should either be 1 or 2.")
 
-        if pages_message.type == 1:
+        for page in pages:
+            if not isinstance(page, Page):
+                raise InvalidTypeError(f"Found object {_type(page)} in the pages list. Only Page objects should be in it.")
+
+        embed = pages[0].embed
+
+        if type == 1:
             if embed is not None:
                 try:
                     footer_text = embed.footer.text
-                    footer_edit = footer_text + f"Page 1 of {len(pages_message.pages)}"
+                    footer_edit = footer_text + f"Page 1 of {len(pages)}"
                 except TypeError:
-                    footer_edit = f"Page 1 of {len(pages_message.pages)}"
+                    footer_edit = f"Page 1 of {len(pages)}"
                 embed.set_footer(text=footer_edit)
 
-            msg = await channel.send(content=pages_message.pages[0].content, embed=embed)
+            msg = await channel.send(content=pages[0].content, embed=embed)
 
             emojis = [self.page_emojis.back, self.page_emojis.forward]
 
@@ -64,27 +79,27 @@ class Paginator:
                     reaction, reaction_user = await self.bot.wait_for('reaction_add', check=lambda r, r_user: r.message.id == msg.id and str(r.emoji) in emojis and (r_user == restricted_user) if restricted_user is not None else r_user != self.bot.user, timeout=timeout)
 
                     if str(reaction.emoji) == emojis[1]:
-                        if current_page != len(pages_message.pages) - 1:
+                        if current_page != len(pages) - 1:
                             current_page += 1
 
                             if embed is not None:
                                 try:
-                                    embed.set_footer(text=footer_text + f"Page {current_page + 1} of {len(pages_message.pages)}")
+                                    embed.set_footer(text=footer_text + f"Page {current_page + 1} of {len(pages)}")
                                 except TypeError:
-                                    embed.set_footer(text=f"Page {current_page + 1} of {len(pages_message.pages)}")
+                                    embed.set_footer(text=f"Page {current_page + 1} of {len(pages)}")
 
-                            await msg.edit(content=pages_message.pages[current_page].content, embed=pages_message.pages[current_page].embed)
+                            await msg.edit(content=pages[current_page].content, embed=pages[current_page].embed)
                     else:
                         if current_page != 0:
                             current_page -= 1
 
                             if embed is not None:
                                 try:
-                                    embed.set_footer(text=footer_text + f"Page {current_page + 1} of {len(pages_message.pages)}")
+                                    embed.set_footer(text=footer_text + f"Page {current_page + 1} of {len(pages)}")
                                 except TypeError:
-                                    embed.set_footer(text=f"Page {current_page + 1} of {len(pages_message.pages)}")
+                                    embed.set_footer(text=f"Page {current_page + 1} of {len(pages)}")
 
-                            await msg.edit(content=pages_message.pages[current_page].content, embed=pages_message.pages[current_page].embed)
+                            await msg.edit(content=pages[current_page].content, embed=pages[current_page].embed)
 
                     await msg.remove_reaction(str(reaction.emoji), reaction_user)
 
@@ -93,14 +108,14 @@ class Paginator:
                         await msg.clear_reactions()
                     break
 
-        elif pages_message.type == 2:
+        elif type == 2:
             if not self.components:
                 DiscordComponents(self.bot)
                 self.components = True
 
-            msg = await channel.send(content=pages_message.pages[0].content, embed=embed, components=[[
+            msg = await channel.send(content=pages[0].content, embed=embed, components=[[
                 Button(emoji=self.page_emojis.back, id="back", disabled=True),
-                Button(label=f"1/{len(pages_message.pages)}", disabled=True),
+                Button(label=f"1/{len(pages)}", disabled=True),
                 Button(emoji=self.page_emojis.forward, id="forward")
             ]])
 
@@ -112,25 +127,25 @@ class Paginator:
                     if interaction.component.id == "forward":
                         current_page += 1
 
-                        await interaction.respond(content=pages_message.pages[current_page].content, embed=pages_message.pages[current_page].embed, type=InteractionType.UpdateMessage, components=[[
+                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=InteractionType.UpdateMessage, components=[[
                             Button(emoji=self.page_emojis.back, id="back"),
-                            Button(label=f"{current_page + 1}/{len(pages_message.pages)}", disabled=True),
-                            Button(emoji=self.page_emojis.forward, id="forward", disabled=True if current_page == len(pages_message.pages) - 1 else False)
+                            Button(label=f"{current_page + 1}/{len(pages)}", disabled=True),
+                            Button(emoji=self.page_emojis.forward, id="forward", disabled=True if current_page == len(pages) - 1 else False)
                         ]])
                     elif interaction.component.id == "back":
                         current_page -= 1
 
-                        await interaction.respond(content=pages_message.pages[current_page].content, embed=pages_message.pages[current_page].embed, type=InteractionType.UpdateMessage, components=[[
+                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=InteractionType.UpdateMessage, components=[[
                             Button(emoji=self.page_emojis.back, id="back", disabled=True if current_page == 0 else False),
-                            Button(label=f"{current_page + 1}/{len(pages_message.pages)}", disabled=True),
+                            Button(label=f"{current_page + 1}/{len(pages)}", disabled=True),
                             Button(emoji=self.page_emojis.forward, id="forward")
                         ]])
 
                 except asyncio.TimeoutError:
                     if disable_on_timeout:
-                        await msg.edit(content=pages_message.pages[current_page].content, embed=pages_message.pages[current_page].embed, components=[[
+                        await msg.edit(content=pages[current_page].content, embed=pages[current_page].embed, components=[[
                             Button(emoji=self.page_emojis.back, id="back", disabled=True),
-                            Button(label=f"{current_page + 1}/{len(pages_message.pages)}", disabled=True),
+                            Button(label=f"{current_page + 1}/{len(pages)}", disabled=True),
                             Button(emoji=self.page_emojis.forward, id="forward", disabled=True)
                         ]])
                     break
