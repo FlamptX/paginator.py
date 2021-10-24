@@ -27,7 +27,7 @@
 You can easily install it using the python package manager `pip`
 
 ```
-pip install discord-paginator
+pip install paginator.py
 ```
 ## Quickstart
 Here are some examples that might help.
