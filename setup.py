@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="paginator.py",
-    version="0.6",
+    version="0.7",
     author="Flampt",
     license="MIT",
     description="Simple to use discord paginator for messages and embeds with reactions and buttons.",
@@ -20,7 +20,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License"
     ],
-    install_requires=['aiohttp', 'discord.py', 'asyncio', 'discord-components'],
+    install_requires=['aiohttp', 'discord.py==2.0.0a3407+gfc51736b', 'asyncio'],
     keywords='discord paginator discord-paginator',
     packages=setuptools.find_packages(include=['paginator', 'paginator.*']),
     python_requires=">=3.6",

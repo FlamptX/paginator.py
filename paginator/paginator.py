@@ -1,11 +1,15 @@
 # Imports
 import asyncio
 import discord
-from discord import TextChannel, DMChannel, Client
-from discord.ext import commands
-from discord_components import DiscordComponents, InteractionType, Button
 from .objects import *
 from .errors import *
+
+if discord.__version__ != "2.0.0a":
+    raise DiscordVersionError("You must use discord.py 2.0.0 in order to use paginator.py")
+
+from discord import TextChannel, DMChannel, Client
+from discord.ui import View, Button
+from discord.ext import commands
 from typing import Union
 
 _type = type
@@ -30,8 +34,6 @@ class Paginator:
     def __init__(self, bot: Union[Client, commands.Bot]):
         self.bot = bot
         self._page_emojis = PageEmojis()
-
-        self.components = False
 
     @property
     def page_emojis(self):
@@ -114,15 +116,16 @@ class Paginator:
                     break
 
         elif type == 2:
-            if not self.components:
-                DiscordComponents(self.bot)
-                self.components = True
-
-            msg = await channel.send(content=pages[0].content, embed=embed, components=[[
-                Button(emoji=self.page_emojis.back, id="back", disabled=True),
+            view = View()
+            btns = [
+                Button(emoji=self.page_emojis.back, custom_id="back", disabled=True),
                 Button(label=f"1/{len(pages)}", disabled=True),
-                Button(emoji=self.page_emojis.forward, id="forward")
-            ]])
+                Button(emoji=self.page_emojis.forward, custom_id="forward")
+            ]
+            for i in btns:
+                view.add_item(i)
+
+            msg = await channel.send(content=pages[0].content, embed=embed, view=view)
 
             current_page = 0
 
@@ -131,27 +134,39 @@ class Paginator:
                     interaction = await self.bot.wait_for('button_click', check=lambda i: i.message.id == msg.id and (i.user == restricted_user) if restricted_user is not None else True, timeout=timeout)
                     if interaction.component.id == "forward":
                         current_page += 1
-
-                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=InteractionType.UpdateMessage, components=[[
-                            Button(emoji=self.page_emojis.back, id="back"),
+                        view = View()
+                        btns = [
+                            Button(emoji=self.page_emojis.back, custom_id="back"),
                             Button(label=f"{current_page + 1}/{len(pages)}", disabled=True),
-                            Button(emoji=self.page_emojis.forward, id="forward", disabled=True if current_page == len(pages) - 1 else False)
-                        ]])
+                            Button(emoji=self.page_emojis.forward, custom_id="forward", disabled=True if current_page == len(pages) - 1 else False)
+                        ]
+                        for i in btns:
+                            view.add_item(i)
+
+                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
                     elif interaction.component.id == "back":
                         current_page -= 1
-
-                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=InteractionType.UpdateMessage, components=[[
-                            Button(emoji=self.page_emojis.back, id="back", disabled=True if current_page == 0 else False),
+                        view = View()
+                        btns = [
+                            Button(emoji=self.page_emojis.back, custom_id="back", disabled=True if current_page == 0 else False),
                             Button(label=f"{current_page + 1}/{len(pages)}", disabled=True),
-                            Button(emoji=self.page_emojis.forward, id="forward")
-                        ]])
+                            Button(emoji=self.page_emojis.forward, custom_id="forward")
+                        ]
+                        for i in btns:
+                            view.add_item(i)
+
+                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
 
                 except asyncio.TimeoutError:
                     if disable_on_timeout:
-                        await msg.edit(content=pages[current_page].content, embed=pages[current_page].embed, components=[[
-                            Button(emoji=self.page_emojis.back, id="back", disabled=True),
+                        view = View()
+                        btns = [
+                            Button(emoji=self.page_emojis.back, custom_id="back", disabled=True),
                             Button(label=f"{current_page + 1}/{len(pages)}", disabled=True),
-                            Button(emoji=self.page_emojis.forward, id="forward", disabled=True)
-                        ]])
-                    break
+                            Button(emoji=self.page_emojis.forward, custom_id="forward", disabled=True)
+                        ]
+                        for i in btns:
+                            view.add_item(i)
 
+                        await msg.edit(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                    break
