@@ -35,7 +35,7 @@ Here are some examples that might help.
 
 ```python
 from paginator import Paginator, Page, NavigationType
-from discord import Embed
+from diskord import Embed
 
 ...
 
@@ -56,7 +56,7 @@ async def test(ctx):
 
 ```python
 from paginator import Paginator, Page, NavigationType
-from discord import Embed
+from diskord import Embed
 
 ...
 
