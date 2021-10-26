@@ -131,7 +131,7 @@ class Paginator:
 
             while not self.bot.is_closed():
                 try:
-                    interaction = await self.bot.wait_for('button_click', check=lambda i: i.message.id == msg.id and (i.user == restricted_user) if restricted_user is not None else True, timeout=timeout)
+                    interaction = await self.bot.wait_for('interaction', check=lambda i: i.message.id == msg.id and (i.user == restricted_user) if restricted_user is not None else True, timeout=timeout)
                     if interaction.component.id == "forward":
                         current_page += 1
                         view = View()
