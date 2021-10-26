@@ -1,8 +1,8 @@
 # Imports
 import asyncio
 import diskord
-from objects import *
-from errors import *
+from .objects import *
+from .errors import *
 
 from diskord import TextChannel, DMChannel, Client
 from diskord.ui import View, Button
