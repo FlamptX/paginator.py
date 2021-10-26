@@ -132,7 +132,7 @@ class Paginator:
             while not self.bot.is_closed():
                 try:
                     interaction = await self.bot.wait_for('interaction', check=lambda i: i.message.id == msg.id and (i.user == restricted_user) if restricted_user is not None else True, timeout=timeout)
-                    if interaction.component.id == "forward":
+                    if interaction.id == "forward":
                         current_page += 1
                         view = View()
                         btns = [
@@ -143,8 +143,8 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
-                    elif interaction.component.id == "back":
+                        await interaction.response.send_message(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
+                    elif interaction.id == "back":
                         current_page -= 1
                         view = View()
                         btns = [
@@ -155,7 +155,7 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.respond(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
+                        await interaction.response.send_message(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
 
                 except asyncio.TimeoutError:
                     if disable_on_timeout:
