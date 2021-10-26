@@ -2,7 +2,6 @@
 import asyncio
 import diskord
 from .objects import *
-from .errors import *
 
 from diskord import TextChannel, DMChannel, Client
 from diskord.ui import View, Button
@@ -27,6 +26,11 @@ class Paginator:
             The channel to send the message to
         pages: PagesMessage
             The object containing data to send the message
+        Raises
+        -----
+          TypeError:
+          - the type is not 1 or 2
+          - the pages list is empty or has an object that is not a Page
     """
     def __init__(self, bot: Union[Client, commands.Bot]):
         self.bot = bot
@@ -40,21 +44,21 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Union[int, None] = 60, restricted_user: Union[diskord.Member, diskord.User] = None, disable_on_timeout: bool = True):
+    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Union[int, None] = 60, author: Union[diskord.Member, diskord.User] = None, disable_on_timeout: bool = True):
         """
-        Only put Page objects in the pages list or you an error will raise
-        type must be either 1 or 2, alternative you can use NavigationType which returns one of those
+        Only put Page objects in the pages list.
+        Type must be either 1 or 2, alternative you can use is NavigationType which has those values.
         """
 
         if type not in [1, 2]:
-            raise InvalidTypeError(f"Type {type} is not valid. It should either be 1 or 2.")
+            raise TypeError(f"Type {type} is not valid. It should either be 1 or 2.")
 
         if pages is []:
-            raise InvalidTypeError("pages list is empty")
+            raise TypeError("pages list is empty")
 
         for page in pages:
             if not isinstance(page, Page):
-                raise InvalidTypeError(f"Found {_type(page)} in the pages list. Only Page objects should be in it.")
+                raise TypeError(f"Found {_type(page)} in the pages list. Only Page objects should be in it.")
 
         embed = pages[0].embed
 
@@ -78,7 +82,7 @@ class Paginator:
 
             while not self.bot.is_closed():
                 try:
-                    reaction, reaction_user = await self.bot.wait_for('reaction_add', check=lambda r, r_user: r.message.id == msg.id and str(r.emoji) in emojis and (r_user == restricted_user) if restricted_user is not None else r_user != self.bot.user, timeout=timeout)
+                    reaction, reaction_user = await self.bot.wait_for('reaction_add', check=lambda r, r_user: r.message.id == msg.id and str(r.emoji) in emojis and (r_user == author) if author is not None else r_user != self.bot.user, timeout=timeout)
 
                     if str(reaction.emoji) == emojis[1]:
                         if current_page != len(pages) - 1:
@@ -128,7 +132,7 @@ class Paginator:
 
             while not self.bot.is_closed():
                 try:
-                    interaction = await self.bot.wait_for('interaction', check=lambda i: i.message.id == msg.id and (i.user == restricted_user) if restricted_user is not None else True, timeout=timeout)
+                    interaction = await self.bot.wait_for('interaction', check=lambda i: i.message.id == msg.id and (i.user == author) if author is not None else True, timeout=timeout)
                     custom_id = interaction.data["custom_id"]
                     if custom_id == "forward":
                         current_page += 1
