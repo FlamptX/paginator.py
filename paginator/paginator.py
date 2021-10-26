@@ -1,15 +1,12 @@
 # Imports
 import asyncio
-import discord
-from .objects import *
-from .errors import *
+import diskord
+from objects import *
+from errors import *
 
-if discord.__version__ != "2.0.0a":
-    raise DiscordVersionError("You must use discord.py 2.0.0 in order to use paginator.py")
-
-from discord import TextChannel, DMChannel, Client
-from discord.ui import View, Button
-from discord.ext import commands
+from diskord import TextChannel, DMChannel, Client
+from diskord.ui import View, Button
+from diskord.ext import commands
 from typing import Union
 
 _type = type
@@ -43,7 +40,7 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: int = 60, restricted_user: Union[discord.Member, discord.User] = None, disable_on_timeout: bool = True):
+    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Union[int, None] = 60, restricted_user: Union[diskord.Member, diskord.User] = None, disable_on_timeout: bool = True):
         """
         Only put Page objects in the pages list or you an error will raise
         type must be either 1 or 2, alternative you can use NavigationType which returns one of those
@@ -132,7 +129,8 @@ class Paginator:
             while not self.bot.is_closed():
                 try:
                     interaction = await self.bot.wait_for('interaction', check=lambda i: i.message.id == msg.id and (i.user == restricted_user) if restricted_user is not None else True, timeout=timeout)
-                    if interaction.id == "forward":
+                    custom_id = interaction.data["custom_id"]
+                    if custom_id == "forward":
                         current_page += 1
                         view = View()
                         btns = [
@@ -143,8 +141,8 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.response.send_message(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
-                    elif interaction.id == "back":
+                        await interaction.edit_original_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                    elif custom_id == "back":
                         current_page -= 1
                         view = View()
                         btns = [
@@ -155,7 +153,7 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.response.send_message(content=pages[current_page].content, embed=pages[current_page].embed, type=7, view=view)
+                        await interaction.edit_original_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
 
                 except asyncio.TimeoutError:
                     if disable_on_timeout:
