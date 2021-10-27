@@ -1,12 +1,12 @@
 # Imports
-import asyncio
+from asyncio import TimeoutError, iscoroutinefunction
 import diskord
-from .objects import *
+from objects import *
 
 from diskord import TextChannel, DMChannel, Client
 from diskord.ui import View, Button
 from diskord.ext import commands
-from typing import Union
+from typing import Union, Optional, Awaitable, Callable
 
 _type = type
 
@@ -44,7 +44,7 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Union[int, None] = 60, author: Union[diskord.Member, diskord.User] = None, disable_on_timeout: bool = True):
+    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[diskord.Member, diskord.User]] = None, disable_on_timeout: bool = True, disable_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
         Type must be either 1 or 2, alternative you can use is NavigationType which has those values.
@@ -59,6 +59,9 @@ class Paginator:
         for page in pages:
             if not isinstance(page, Page):
                 raise TypeError(f"Found {_type(page)} in the pages list. Only Page objects should be in it.")
+
+        if disable_callback and not iscoroutinefunction(disable_callback):
+            raise TypeError("disable_callback must be a coroutine")
 
         embed = pages[0].embed
 
@@ -111,7 +114,7 @@ class Paginator:
 
                     await msg.remove_reaction(str(reaction.emoji), reaction_user)
 
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     if disable_on_timeout:
                         await msg.clear_reactions()
                     break
@@ -159,7 +162,7 @@ class Paginator:
 
                         await interaction.edit_original_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
 
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     if disable_on_timeout:
                         view = View()
                         btns = [
@@ -171,4 +174,6 @@ class Paginator:
                             view.add_item(i)
 
                         await msg.edit(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                        if disable_callback:
+                            await disable_callback()
                     break
