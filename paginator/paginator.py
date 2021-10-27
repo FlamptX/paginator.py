@@ -1,7 +1,7 @@
 # Imports
 from asyncio import TimeoutError, iscoroutinefunction
 import diskord
-from objects import *
+from .objects import *
 
 from diskord import TextChannel, DMChannel, Client
 from diskord.ui import View, Button
@@ -44,7 +44,7 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[diskord.Member, diskord.User]] = None, disable_on_timeout: bool = True, disable_callback: Optional[Callable[[], Awaitable[None]]] = None):
+    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[diskord.Member, diskord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
         Type must be either 1 or 2, alternative you can use is NavigationType which has those values.
@@ -60,7 +60,7 @@ class Paginator:
             if not isinstance(page, Page):
                 raise TypeError(f"Found {_type(page)} in the pages list. Only Page objects should be in it.")
 
-        if disable_callback and not iscoroutinefunction(disable_callback):
+        if timeout_callback and not iscoroutinefunction(timeout_callback):
             raise TypeError("disable_callback must be a coroutine")
 
         embed = pages[0].embed
@@ -174,6 +174,6 @@ class Paginator:
                             view.add_item(i)
 
                         await msg.edit(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
-                        if disable_callback:
-                            await disable_callback()
+                    if timeout_callback:
+                        await timeout_callback()
                     break
