@@ -117,6 +117,8 @@ class Paginator:
                 except TimeoutError:
                     if disable_on_timeout:
                         await msg.clear_reactions()
+                    if timeout_callback:
+                        await timeout_callback()
                     break
 
         elif type == 2:
