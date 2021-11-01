@@ -29,13 +29,15 @@ You can easily install it using the python package manager `pip`
 ```
 pip install paginator.py
 ```
+Note: paginator.py only works with [Diskord](https://github.com/diskord-dev/diskord)
+
 ## Quickstart
 Here are some examples that might help.
 ### Sending a message with pages that uses reaction
 
 ```python
 from paginator import Paginator, Page, NavigationType
-from discord import Embed
+from diskord import Embed
 
 ...
 
@@ -56,7 +58,7 @@ async def test(ctx):
 
 ```python
 from paginator import Paginator, Page, NavigationType
-from discord import Embed
+from diskord import Embed
 
 ...
 
