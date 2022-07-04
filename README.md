@@ -7,7 +7,7 @@
   <p align='center'>
     <img src=https://img.shields.io/pypi/dm/paginator.py?color=success&label=PyPi%20Downloads&style=flat-square>
     <img src=https://shields.io/github/issues-raw/FlamptX/discord-paginator?color=success&label=Active%20Issues&style=flat-square>
-    <img src=https://img.shields.io/badge/Latest_Version-0.8.3-informational>
+    <img src=https://img.shields.io/badge/Latest_Version-0.8.5-informational>
   </p>
   <p align='center'>
     Simple to use discord paginator for messages and embeds with reactions and buttons.
@@ -37,7 +37,7 @@ Here are some examples that might help.
 
 ```python
 from paginator import Paginator, Page, NavigationType
-from diskord import Embed
+from discord import Embed
 
 ...
 
@@ -58,7 +58,7 @@ async def test(ctx):
 
 ```python
 from paginator import Paginator, Page, NavigationType
-from diskord import Embed
+from discord import Embed
 
 ...
 

@@ -1,11 +1,10 @@
 # Imports
 from asyncio import TimeoutError, iscoroutinefunction
-import diskord
 from .objects import *
 
-from diskord import TextChannel, DMChannel, Client
-from diskord.ui import View, Button
-from diskord.ext import commands
+from discord import TextChannel, DMChannel, Client, Member, User
+from discord.ui import View, Button
+from discord.ext import commands
 from typing import Union, Optional, Awaitable, Callable
 
 _type = type
@@ -44,10 +43,10 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[diskord.Member, diskord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
+    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[Member, User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
-        Type must be either 1 or 2, alternative you can use is NavigationType which has those values.
+        Type must be either 1 or 2, an alternative you can use is NavigationType which has those values.
         """
 
         if type not in [1, 2]:
