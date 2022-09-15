@@ -1,5 +1,6 @@
 # Imports
-from asyncio import TimeoutError, iscoroutinefunction
+import asyncio
+import discord
 from .objects import *
 
 from discord import TextChannel, DMChannel, Client, Member, User
@@ -43,7 +44,11 @@ class Paginator:
     def page_emojis(self, obj: PageEmojis):
         self._page_emojis = obj
 
-    async def send(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[Member, User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
+    async def send(self, *args, **kwargs):
+        loop = asyncio.get_event_loop()
+        loop.create_task(self._send_pages(*args, **kwargs))
+
+    async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[discord.Member, discord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
         Type must be either 1 or 2, an alternative you can use is NavigationType which has those values.
@@ -59,7 +64,7 @@ class Paginator:
             if not isinstance(page, Page):
                 raise TypeError(f"Found {_type(page)} in the pages list. Only Page objects should be in it.")
 
-        if timeout_callback and not iscoroutinefunction(timeout_callback):
+        if timeout_callback and not asyncio.iscoroutinefunction(timeout_callback):
             raise TypeError("disable_callback must be a coroutine")
 
         embed = pages[0].embed
@@ -113,7 +118,7 @@ class Paginator:
 
                     await msg.remove_reaction(str(reaction.emoji), reaction_user)
 
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     if disable_on_timeout:
                         await msg.clear_reactions()
                     if timeout_callback:
@@ -149,7 +154,7 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.edit_original_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                        await interaction.edit_orignal_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
                     elif custom_id == "back":
                         current_page -= 1
                         view = View()
@@ -161,9 +166,9 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.edit_original_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                        await interaction.edit_orignal_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
 
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     if disable_on_timeout:
                         view = View()
                         btns = [
