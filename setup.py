@@ -20,7 +20,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License"
     ],
-    install_requires=['aiohttp', 'diskord', 'asyncio'],
+    install_requires=['aiohttp', 'discord', 'asyncio'],
     keywords='discord paginator discord-paginator',
     packages=setuptools.find_packages(include=['paginator', 'paginator.*']),
     python_requires=">=3.6",
