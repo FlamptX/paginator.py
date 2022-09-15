@@ -29,6 +29,8 @@ You can easily install it using the python package manager `pip`
 ```
 pip install paginator.py
 ```
+Note: paginator.py only works with [Diskord](https://github.com/diskord-dev/diskord)
+
 ## Quickstart
 Here are some examples that might help.
 ### Sending a message with pages that uses reaction
