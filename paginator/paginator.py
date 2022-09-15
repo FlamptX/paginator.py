@@ -154,7 +154,7 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.edit_original_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                        await interaction.edit_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
                     elif custom_id == "back":
                         current_page -= 1
                         view = View()
@@ -166,7 +166,7 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.edit_original_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                        await interaction.edit_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
 
                 except asyncio.TimeoutError:
                     if disable_on_timeout:
