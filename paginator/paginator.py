@@ -1,11 +1,11 @@
 # Imports
 import asyncio
-import diskord
+import discord
 from .objects import *
 
-from diskord import TextChannel, DMChannel, Client
-from diskord.ui import View, Button
-from diskord.ext import commands
+from discord import TextChannel, DMChannel, Client
+from discord.ui import View, Button
+from discord.ext import commands
 from typing import Union, Optional, Awaitable, Callable
 
 _type = type
@@ -48,7 +48,7 @@ class Paginator:
         loop = asyncio.get_event_loop()
         loop.create_task(self._send_pages(*args, **kwargs))
 
-    async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[diskord.Member, diskord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
+    async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[discord.Member, discord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
         Type must be either 1 or 2, alternative you can use is NavigationType which has those values.
@@ -154,7 +154,7 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.edit_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                        await interaction.edit_orignal_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
                     elif custom_id == "back":
                         current_page -= 1
                         view = View()
@@ -166,7 +166,7 @@ class Paginator:
                         for i in btns:
                             view.add_item(i)
 
-                        await interaction.edit_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
+                        await interaction.edit_orignal_message(content=pages[current_page].content, embed=pages[current_page].embed, view=view)
 
                 except asyncio.TimeoutError:
                     if disable_on_timeout:
