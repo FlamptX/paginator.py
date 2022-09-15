@@ -2,7 +2,7 @@ from discord import Embed
 
 class NavigationType:
     """
-    For those who don't want to remember two numbers, use this in the send method type argument
+    You can also just put 1 or 2 as the type if you remember what each one is for
     """
     Reactions = 1  # Change page with reactions
     Buttons = 2  # Change page with buttons
