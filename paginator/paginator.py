@@ -3,7 +3,7 @@ import asyncio
 import discord
 from .objects import *
 
-from discord import TextChannel, DMChannel, Client
+from discord import TextChannel, DMChannel, Client, Member, User
 from discord.ui import View, Button
 from discord.ext import commands
 from typing import Union, Optional, Awaitable, Callable
@@ -51,7 +51,7 @@ class Paginator:
     async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int, None] = 60, author: Optional[Union[discord.Member, discord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
-        Type must be either 1 or 2, alternative you can use is NavigationType which has those values.
+        Type must be either 1 or 2, an alternative you can use is NavigationType which has those values.
         """
 
         if type not in [1, 2]:
