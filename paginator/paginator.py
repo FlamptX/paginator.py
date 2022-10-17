@@ -48,7 +48,7 @@ class Paginator:
         loop = asyncio.get_event_loop()
         loop.create_task(self._send_pages(*args, **kwargs))
 
-    async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = 60, author: Optional[Union[discord.Member, discord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
+    async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int, None] = 60, author: Optional[Union[discord.Member, discord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
         Type must be either 1 or 2, alternative you can use is NavigationType which has those values.
@@ -126,7 +126,7 @@ class Paginator:
                     break
 
         elif type == 2:
-            view = View()
+            view = View(timeout=timeout)
             btns = [
                 Button(emoji=self.page_emojis.back, custom_id="back", disabled=True),
                 Button(label=f"1/{len(pages)}", disabled=True),
@@ -141,7 +141,7 @@ class Paginator:
 
             while not self.bot.is_closed():
                 try:
-                    interaction = await self.bot.wait_for('interaction', check=lambda i: i.message.id == msg.id and (i.user == author) if author is not None else True, timeout=timeout)
+                    interaction = await self.bot.wait_for('interaction', check=lambda i: i.message.id == msg.id and (i.user == author) if author is not None else True, timeout=None)
                     custom_id = interaction.data["custom_id"]
                     if custom_id == "forward":
                         current_page += 1
