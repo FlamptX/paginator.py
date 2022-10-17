@@ -48,7 +48,7 @@ class Paginator:
         loop = asyncio.get_event_loop()
         loop.create_task(self._send_pages(*args, **kwargs))
 
-    async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int, None] = 60, author: Optional[Union[discord.Member, discord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
+    async def _send_pages(self, channel: Union[TextChannel, DMChannel], pages: list, type: int = 2, timeout: Optional[int] = None, author: Optional[Union[discord.Member, discord.User]] = None, disable_on_timeout: bool = True, timeout_callback: Optional[Callable[[], Awaitable[None]]] = None):
         """
         Only put Page objects in the pages list.
         Type must be either 1 or 2, an alternative you can use is NavigationType which has those values.
