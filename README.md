@@ -19,7 +19,7 @@
 - Very easy to use
 - Customisable
 - Change pages with buttons or reactions
-- Actively maintained
+- ~~Actively maintained~~
 ## Links
 - **[Documentation](https://flampt.gitbook.io/paginator)**
 - **[PyPi](https://pypi.org/project/paginator.py)**
